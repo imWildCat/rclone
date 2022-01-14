@@ -357,6 +357,12 @@ jobs:
         with:
           go-version: 1.16
 
+      - name: install gomobile
+        run: |
+          go get golang.org/x/mobile/cmd/gobind
+          go get golang.org/x/mobile/cmd/gomobile
+          env PATH=$PATH:~/go/bin gomobile init
+
       - name: ios build
         shell: bash
         run: |
