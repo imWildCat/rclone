@@ -366,4 +366,4 @@ jobs:
       - name: ios build
         shell: bash
         run: |
-          gomobile bind -v -target=iossimulator librclone/gomobile
+          env PATH=$PATH:~/go/bin gomobile bind -v -target=iossimulator librclone/gomobile
