@@ -341,7 +341,7 @@ jobs:
         if: github.head_ref == '' && github.repository == 'rclone/rclone'
 
   ios:
-    if: ${{ github.repository == 'rclone/rclone' || github.event.inputs.manual }}
+    # if: ${{ github.repository == 'rclone/rclone' || github.event.inputs.manual }}
     timeout-minutes: 30
     name: "ios-all"
     runs-on: macos-latest
