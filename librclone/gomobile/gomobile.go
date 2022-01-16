@@ -2,15 +2,29 @@
 package gomobile
 
 import (
-	"github.com/rclone/rclone/librclone/librclone"
-
 	_ "github.com/rclone/rclone/backend/all" // import all backends
-	_ "github.com/rclone/rclone/lib/plugin"  // import plugins
+	"github.com/rclone/rclone/fs/config"
+	"github.com/rclone/rclone/lib/oauthutil"
+	_ "github.com/rclone/rclone/lib/plugin" // import plugins
+	"github.com/rclone/rclone/librclone/librclone"
 )
 
 // RcloneInitialize initializes rclone as a library
 func RcloneInitialize() {
 	librclone.Initialize()
+}
+
+func SetConfigPath(path string) {
+	config.SetConfigPath(path)
+}
+
+// define call back interface
+type StringCallback interface {
+	Callback(str string)
+}
+
+func SetAuthCallback(callback StringCallback) {
+	oauthutil.SetAuthCallbackFunc(callback.Callback)
 }
 
 // RcloneFinalize finalizes the library

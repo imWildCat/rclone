@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -72,6 +73,10 @@ All done. Please go back to rclone.
 </html>
 `
 )
+
+type AuthCallbackFunc func(authURL string)
+
+var authCallbackFunc AuthCallbackFunc
 
 // SharedOptions are shared between backends the utilize an OAuth flow
 var SharedOptions = []fs.Option{{
@@ -605,6 +610,10 @@ func fixRedirect(oauthConfig *oauth2.Config) *oauth2.Config {
 	return oauthConfig
 }
 
+func SetAuthCallbackFunc(f AuthCallbackFunc) {
+	authCallbackFunc = f
+}
+
 // configSetup does the initial creation of the token
 //
 // If opt is nil it will use the default Options
@@ -634,7 +643,16 @@ func configSetup(ctx context.Context, id, name string, m configmap.Mapper, oauth
 
 	if !authorizeNoAutoBrowser {
 		// Open the URL for the user to visit
-		_ = open.Start(authURL)
+		if runtime.GOOS == "ios" || runtime.GOOS == "android" {
+			authCallbackFunc(authURL)
+			fs.Logf(nil, "Opening authCallbackFunc: %s\n", authURL)
+		} else {
+			_ = open.Start(authURL)
+
+			fs.Logf(nil, "Traditional way to ooepn: %s\n", authURL)
+
+		}
+		fs.Logf(nil, "GOOS: %s\n", runtime.GOOS)
 		fs.Logf(nil, "If your browser doesn't open automatically go to the following link: %s\n", authURL)
 	} else {
 		fs.Logf(nil, "Please go to the following link: %s\n", authURL)
